@@ -1,0 +1,19 @@
+[package]
+name = "turbos"
+version = "0.1.0"
+edition = "2024"
+default-run = "qemu-bios"
+
+[workspace]
+members = ["kernel"]
+
+[dependencies]
+# ovmf-prebuilt = "0.1.0-alpha"
+ovmf-prebuilt = "0.2"
+
+[build-dependencies]
+turbos_kernel = { path = "kernel", artifact = "bin", target = "x86_64-unknown-none", version = "0.1.0" }
+bootloader = "0.11"
+
+[workspace.dependencies]
+turbos_kernel = { version = "0.1.0", path = "kernel" }

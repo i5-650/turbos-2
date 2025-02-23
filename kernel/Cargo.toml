@@ -1,0 +1,31 @@
+[package]
+name = "turbos_kernel"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "turbos_kernel"
+path = "src/main.rs"
+test = false
+bench = false
+
+[dependencies]
+bootloader_api = "0.11.2"
+embedded-graphics = "0.8.1"
+x86_64 = "0.14"
+spin = "0.9"
+
+[dependencies.lazy_static]
+version = "1.5"
+features = ["spin_no_std"]
+
+[dependencies.noto-sans-mono-bitmap]
+version = "0.3"
+default-features = false
+features = [
+    "regular",
+    "size_16",
+    "unicode-basic-latin",
+    # required for the fallback char '�'
+    "unicode-specials",
+]
