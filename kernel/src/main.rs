@@ -3,10 +3,12 @@
 
 use bootloader_api::BootInfo;
 use core::panic::PanicInfo;
-use framebuffer::Color;
 
-mod framebuffer;
-mod serial;
+use turbos_kernel::framebuffer;
+use turbos_kernel::framebuffer::Color;
+use turbos_kernel::println;
+use turbos_kernel::serial_println;
+use turbos_kernel::set_color;
 
 const CONFIG: bootloader_api::BootloaderConfig = {
     let mut config = bootloader_api::BootloaderConfig::new_default();
@@ -17,20 +19,25 @@ const CONFIG: bootloader_api::BootloaderConfig = {
 bootloader_api::entry_point!(kernel_main, config = &CONFIG);
 
 fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
-    if let Some(fb) = boot_info.framebuffer.as_mut() {
-        let info = fb.info();
-        let buffer = fb.buffer_mut();
-        framebuffer::init(buffer, info);
+    let fb = boot_info
+        .framebuffer
+        .as_mut()
+        .expect("framebuffer should always be present");
+    let info = fb.info();
+    let buffer = fb.buffer_mut();
+    framebuffer::init(buffer, info);
 
-        println!("Welcome on the worst OS");
-        set_color!(Color::BLUE);
-        println!("I can be blue");
+    println!("Welcome on the worst OS");
+    set_color!(Color::BLUE);
+    println!("I can be blue");
 
-        set_color!(Color::GREEN);
-        println!("I can be green");
-    }
+    set_color!(Color::GREEN);
+    println!("I can be green");
+    set_color!(Color::WHITE);
 
-    serial_println!("Test");
+    serial_println!("Before init");
+
+    turbos_kernel::init();
 
     turbos_kernel::hlt_loop();
 }
