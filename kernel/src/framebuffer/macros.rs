@@ -16,13 +16,13 @@ macro_rules! println {
 #[doc(hidden)]
 pub fn _print(args: fmt::Arguments) {
     use core::fmt::Write;
-    let mut writer = WRITER.lock();
+    let mut writer = WRITER.write();
     writer.write_fmt(args).unwrap();
 }
 
 #[macro_export]
 macro_rules! set_color {
     ($color:expr) => {
-        $crate::framebuffer::WRITER.lock().set_color($color);
+        $crate::framebuffer::WRITER.write().set_color($color);
     };
 }

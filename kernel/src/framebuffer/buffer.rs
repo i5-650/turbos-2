@@ -1,18 +1,15 @@
 use bootloader_api::info::{FrameBufferInfo, PixelFormat};
 
 use core::{fmt, ptr};
+use spin::{Lazy, RwLock};
 
 use crate::framebuffer::Color;
 
 use font_constants::BACKUP_CHAR;
 
-use lazy_static::lazy_static;
-
 use noto_sans_mono_bitmap::{
     FontWeight, RasterHeight, RasterizedChar, get_raster, get_raster_width,
 };
-
-use spin::Mutex;
 
 const LINE_SPACING: usize = 2;
 const LETTER_SPACING: usize = 0;
@@ -30,18 +27,18 @@ mod font_constants {
     pub const FONT_WEIGHT: FontWeight = FontWeight::Regular;
 }
 
-lazy_static! {
-    pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
+pub static WRITER: Lazy<RwLock<Writer>> = Lazy::new(|| {
+    RwLock::new(Writer {
         framebuffer: None,
         info: None,
         x: BORDER_PADDING,
         y: BORDER_PADDING,
-        color: Color::WHITE
-    });
-}
+        color: Color::WHITE,
+    })
+});
 
 pub fn init(buffer: &'static mut [u8], info: FrameBufferInfo) {
-    let mut writer = WRITER.lock();
+    let mut writer = WRITER.write();
     writer.framebuffer = Option::from(buffer);
     writer.info = Option::from(info);
     writer.clear();
