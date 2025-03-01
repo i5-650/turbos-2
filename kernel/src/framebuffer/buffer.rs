@@ -2,6 +2,8 @@ use bootloader_api::info::{FrameBufferInfo, PixelFormat};
 
 use core::{fmt, ptr};
 
+use crate::framebuffer::Color;
+
 use font_constants::BACKUP_CHAR;
 
 use lazy_static::lazy_static;
@@ -54,29 +56,6 @@ fn get_char_raster(c: char) -> RasterizedChar {
         )
     }
     get(c).unwrap_or_else(|| get(BACKUP_CHAR).expect("Should get raster of backup char."))
-}
-
-#[derive(Clone, Copy)]
-pub struct Color {
-    pub r: u8,
-    pub g: u8,
-    pub b: u8,
-}
-
-impl Color {
-    pub const WHITE: Self = Self {
-        r: 255,
-        g: 255,
-        b: 255,
-    };
-    pub const RED: Self = Self { r: 255, g: 0, b: 0 };
-    pub const GREEN: Self = Self { r: 0, g: 255, b: 0 };
-    pub const BLUE: Self = Self { r: 0, g: 0, b: 255 };
-    pub const YELLOW: Self = Self {
-        r: 255,
-        g: 255,
-        b: 0,
-    };
 }
 
 pub struct Writer {
@@ -188,30 +167,4 @@ impl fmt::Write for Writer {
         }
         Ok(())
     }
-}
-
-#[macro_export]
-#[allow(clippy::unseparated_literal_suffix)]
-macro_rules! print {
-    ($($arg:tt)*) => ($crate::framebuffer::_print(format_args!($($arg)*)));
-}
-
-#[macro_export]
-macro_rules! println {
-    () => ($crate::print!("\n"));
-    ($($arg:tt)*) => ($crate::print!("{}\n", format_args!($($arg)*)));
-}
-
-#[doc(hidden)]
-pub fn _print(args: fmt::Arguments) {
-    use core::fmt::Write;
-    let mut writer = WRITER.lock();
-    writer.write_fmt(args).unwrap();
-}
-
-#[macro_export]
-macro_rules! set_color {
-    ($color:expr) => {
-        $crate::framebuffer::WRITER.lock().set_color($color);
-    };
 }
