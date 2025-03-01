@@ -6,6 +6,7 @@ use core::panic::PanicInfo;
 use framebuffer::Color;
 
 mod framebuffer;
+mod serial;
 
 const CONFIG: bootloader_api::BootloaderConfig = {
     let mut config = bootloader_api::BootloaderConfig::new_default();
@@ -28,10 +29,14 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
         set_color!(Color::GREEN);
         println!("I can be green");
     }
+
+    serial_println!("Test");
+
     turbos_kernel::hlt_loop();
 }
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
+    println!("{:?}", info);
     loop {}
 }

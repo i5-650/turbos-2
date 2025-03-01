@@ -1,5 +1,5 @@
 use crate::framebuffer::WRITER;
-use core::{fmt, ptr};
+use core::fmt;
 
 #[macro_export]
 #[allow(clippy::unseparated_literal_suffix)]

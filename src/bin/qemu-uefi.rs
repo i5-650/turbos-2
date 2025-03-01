@@ -13,6 +13,8 @@ fn main() {
         "if=pflash,format=raw,file=./{}",
         prebuilt.get_file(Arch::X64, FileType::Code).display()
     ));
+    qemu.arg("-serial");
+    qemu.arg("stdio");
 
     let exit_status = qemu.status().unwrap();
     match exit_status.code() {
@@ -20,4 +22,3 @@ fn main() {
         Some(code) => exit(code),
     }
 }
-
